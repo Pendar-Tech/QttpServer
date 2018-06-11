@@ -1,7 +1,7 @@
 #ifndef SWAGGER_H
 #define SWAGGER_H
 
-#include "action.h"
+#include "qttp_action.h"
 
 namespace qttp
 {

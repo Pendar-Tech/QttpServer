@@ -1,5 +1,5 @@
 #include "httpdata.h"
-#include "utils.h"
+#include "qttp_utils.h"
 
 using namespace std;
 using namespace native::http;

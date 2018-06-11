@@ -1,7 +1,7 @@
 #ifndef DESKTOPS_H
 #define DESKTOPS_H
 
-#include <action.h>
+#include <qttp_action.h>
 
 class Desktops : public qttp::Action
 {

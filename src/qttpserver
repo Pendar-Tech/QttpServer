@@ -3,6 +3,6 @@
 
 #include "httpserver.h"
 #include "httpdata.h"
-#include "utils.h"
+#include "qttp_utils.h"
 
 #endif // QTTPSERVER_H

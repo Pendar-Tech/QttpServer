@@ -1,7 +1,7 @@
 #ifndef PHONES_H
 #define PHONES_H
 
-#include <action.h>
+#include <qttp_action.h>
 
 class Phones : public qttp::Action
 {

@@ -2,7 +2,7 @@
 #define QTTP_DEFAULTS_H
 
 #include "qttp_global.h"
-#include "action.h"
+#include "qttp_action.h"
 
 namespace qttp
 {

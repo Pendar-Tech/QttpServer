@@ -1,7 +1,7 @@
 #ifndef LAPTOPS_H
 #define LAPTOPS_H
 
-#include <action.h>
+#include <qttp_action.h>
 
 class Laptops : public qttp::Action
 {

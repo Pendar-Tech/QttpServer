@@ -1,7 +1,7 @@
 #ifndef TABLETS_H
 #define TABLETS_H
 
-#include <action.h>
+#include <qttp_action.h>
 
 class Tablets : public qttp::Action
 {

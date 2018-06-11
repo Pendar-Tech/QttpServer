@@ -323,6 +323,6 @@ QTTP_PRIVATE:
 
 }
 
-#include "utils.h"
+#include "qttp_utils.h"
 
 #endif // QTTP_GLOBAL_H

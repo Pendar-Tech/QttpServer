@@ -3,10 +3,10 @@
 
 #include "qttp_global.h"
 #include "httproute.h"
-#include "action.h"
+#include "qttp_action.h"
 #include "httpdata.h"
 #include "httpevent.h"
-#include "fileutils.h"
+#include "qttp_fileutils.h"
 
 #ifdef QTTP_COLLECT_STATS
   #define STATS_INC(X) m_Stats->increment( X )

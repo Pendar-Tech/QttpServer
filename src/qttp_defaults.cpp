@@ -1,4 +1,4 @@
-#include "defaults.h"
+#include "qttp_defaults.h"
 #include "httpdata.h"
 
 using namespace qttp;

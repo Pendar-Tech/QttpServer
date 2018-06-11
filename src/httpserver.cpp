@@ -1,7 +1,7 @@
 #include "httpserver.h"
 #include "httpevent.h"
 #include "swagger.h"
-#include "defaults.h"
+#include "qttp_defaults.h"
 
 using namespace std;
 using namespace qttp;
