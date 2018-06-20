@@ -129,6 +129,19 @@ class QTTPSHARED_EXPORT HttpServer : public QObject
       return action;
     }
 
+    template<class T, class P> std::shared_ptr<Action> addActionAndRegister(P& param, Visibility visibilty = Visibility::Show)
+    {
+      std::shared_ptr<Action> action(new T(param));
+      HttpServer::addAction(action);
+      auto routes = action->getRoutes();
+      for(const auto & path : routes)
+      {
+        HttpServer::registerRoute(action, path, visibilty);
+      }
+      return action;
+    }
+
+
     template<class T> std::shared_ptr<Action> addActionAndRegister(const QString& path,
                                                                    const std::initializer_list<HttpMethod>& methods,
                                                                    Visibility visibilty = Visibility::Show)
