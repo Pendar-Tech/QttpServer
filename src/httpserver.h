@@ -215,7 +215,7 @@ class QTTPSHARED_EXPORT HttpServer : public QObject
       return m_IsSwaggerEnabled;
     }
 
-    bool initialize();
+    bool initialize(bool bProcessCommandLine = true);
     void initGlobal(const QString& filepath);
     void initRoutes(const QString& filepath);
     void initConfigDirectory(const QString& path);

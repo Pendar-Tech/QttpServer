@@ -70,7 +70,7 @@ HttpServer::~HttpServer()
   }
 }
 
-bool HttpServer::initialize()
+bool HttpServer::initialize(bool bProcessCommandLine)
 {
   if(m_IsInitialized)
   {
@@ -98,33 +98,36 @@ bool HttpServer::initialize()
   QCoreApplication* app = QCoreApplication::instance();
   Q_ASSERT(app);
 
-  m_CmdLineParser.addOptions({
-    {{"i", "ip"},
-     QCoreApplication::translate("main", "ip of the target interface"),
-     QCoreApplication::translate("main", "ip")},
-    {{"p", "port"},
-     QCoreApplication::translate("main", "port to listen on"),
-     QCoreApplication::translate("main", "port")},
-    {{"m", "meta"},
-     QCoreApplication::translate("main", "appends metadata to responses")},
-    {{"c", "config"},
-     QCoreApplication::translate("main", "absolute path to the global config file (json)"),
-     QCoreApplication::translate("main", "config")},
-    {{"r", "routes"},
-     QCoreApplication::translate("main", "absolute path to the routes config file (json)"),
-     QCoreApplication::translate("main", "routes")},
-    {{"d", "dir"},
-     QCoreApplication::translate("main", "absolute path to the config directory, don't combine with -c or -r args"),
-     QCoreApplication::translate("main", "dir")},
-    {{"w", "www"},
-     QCoreApplication::translate("main", "absolute path to the www folder to serve http files"),
-     QCoreApplication::translate("main", "www")},
-    {{"s", "swagger"},
-     QCoreApplication::translate("main", "exposes swagger-api json responses for the path /swagger/")},
-  });
+  if(bProcessCommandLine)
+  {
+      m_CmdLineParser.addOptions({
+                                     {{"i", "ip"},
+                                      QCoreApplication::translate("main", "ip of the target interface"),
+                                      QCoreApplication::translate("main", "ip")},
+                                     {{"p", "port"},
+                                      QCoreApplication::translate("main", "port to listen on"),
+                                      QCoreApplication::translate("main", "port")},
+                                     {{"m", "meta"},
+                                      QCoreApplication::translate("main", "appends metadata to responses")},
+                                     {{"c", "config"},
+                                      QCoreApplication::translate("main", "absolute path to the global config file (json)"),
+                                      QCoreApplication::translate("main", "config")},
+                                     {{"r", "routes"},
+                                      QCoreApplication::translate("main", "absolute path to the routes config file (json)"),
+                                      QCoreApplication::translate("main", "routes")},
+                                     {{"d", "dir"},
+                                      QCoreApplication::translate("main", "absolute path to the config directory, don't combine with -c or -r args"),
+                                      QCoreApplication::translate("main", "dir")},
+                                     {{"w", "www"},
+                                      QCoreApplication::translate("main", "absolute path to the www folder to serve http files"),
+                                      QCoreApplication::translate("main", "www")},
+                                     {{"s", "swagger"},
+                                      QCoreApplication::translate("main", "exposes swagger-api json responses for the path /swagger/")},
+                                 });
 
-  m_CmdLineParser.addHelpOption();
-  m_CmdLineParser.process(*app);
+      m_CmdLineParser.addHelpOption();
+      m_CmdLineParser.process(*app);
+  }
 
   if(env.contains(CONFIG_DIRECTORY_ENV_VAR))
   {
@@ -140,67 +143,76 @@ bool HttpServer::initialize()
     }
   }
 
-  QJsonValue d = m_CmdLineParser.value("d");
-  if(d.isString() && !d.isNull() && !d.toString().trimmed().isEmpty())
+  if(bProcessCommandLine)
   {
-    initConfigDirectory(d.toString());
+      QJsonValue d = m_CmdLineParser.value("d");
+      if(d.isString() && !d.isNull() && !d.toString().trimmed().isEmpty())
+      {
+          initConfigDirectory(d.toString());
+      }
+      else
+      {
+          QJsonValue c = m_CmdLineParser.value("c");
+          if(c.isString() && !c.isNull() && !c.toString().trimmed().isEmpty())
+          {
+              initGlobal(c.toString());
+          }
+          else
+          {
+              initGlobal(GLOBAL_CONFIG_FILE_PATH);
+          }
+
+          QJsonValue r = m_CmdLineParser.value("r");
+          if(r.isString() && !r.isNull() && !r.toString().trimmed().isEmpty())
+          {
+              initRoutes(r.toString());
+          }
+          else
+          {
+              initRoutes(ROUTES_CONFIG_FILE_PATH);
+          }
+      }
+
+      if(!m_SendRequestMetadata)
+      {
+          m_SendRequestMetadata = m_CmdLineParser.isSet("m");
+          LOG_DEBUG("CmdLine meta-data" << m_SendRequestMetadata);
+      }
+
+      if(!m_IsSwaggerEnabled)
+      {
+          initSwagger(m_CmdLineParser.isSet("s"));
+          LOG_DEBUG("CmdLine swagger" << m_IsSwaggerEnabled);
+      }
+
+      QJsonValue i = m_CmdLineParser.value("i");
+      if((i.isString() || i.isDouble()) && !i.toString().trimmed().isEmpty())
+      {
+          QString ip = i.toString();
+          m_GlobalConfig["bindIp"] = ip;
+          LOG_DEBUG("CmdLine ip" << ip);
+      }
+
+      QJsonValue p = m_CmdLineParser.value("p");
+      if((p.isString() || p.isDouble()) && !p.toString().trimmed().isEmpty())
+      {
+          qint32 port = p.toInt();
+          m_GlobalConfig["bindPort"] = port;
+          LOG_DEBUG("CmdLine port" << port);
+      }
+
+      QJsonValue w = m_CmdLineParser.value("w");
+      if(w.isString() && !w.isNull() && !w.toString().trimmed().isEmpty())
+      {
+          initHttpDirectory(w.toString());
+          LOG_DEBUG("CmdLine www/web/http-files" << w);
+      }
   }
-  else
+  else // !bProcessCommandLine
   {
-    QJsonValue c = m_CmdLineParser.value("c");
-    if(c.isString() && !c.isNull() && !c.toString().trimmed().isEmpty())
-    {
-      initGlobal(c.toString());
-    }
-    else
-    {
+      // we aren't processing the command line, so we need to execute things that would have been done if thecommnadline had been empty
       initGlobal(GLOBAL_CONFIG_FILE_PATH);
-    }
-
-    QJsonValue r = m_CmdLineParser.value("r");
-    if(r.isString() && !r.isNull() && !r.toString().trimmed().isEmpty())
-    {
-      initRoutes(r.toString());
-    }
-    else
-    {
       initRoutes(ROUTES_CONFIG_FILE_PATH);
-    }
-  }
-
-  if(!m_SendRequestMetadata)
-  {
-    m_SendRequestMetadata = m_CmdLineParser.isSet("m");
-    LOG_DEBUG("CmdLine meta-data" << m_SendRequestMetadata);
-  }
-
-  if(!m_IsSwaggerEnabled)
-  {
-    initSwagger(m_CmdLineParser.isSet("s"));
-    LOG_DEBUG("CmdLine swagger" << m_IsSwaggerEnabled);
-  }
-
-  QJsonValue i = m_CmdLineParser.value("i");
-  if((i.isString() || i.isDouble()) && !i.toString().trimmed().isEmpty())
-  {
-    QString ip = i.toString();
-    m_GlobalConfig["bindIp"] = ip;
-    LOG_DEBUG("CmdLine ip" << ip);
-  }
-
-  QJsonValue p = m_CmdLineParser.value("p");
-  if((p.isString() || p.isDouble()) && !p.toString().trimmed().isEmpty())
-  {
-    qint32 port = p.toInt();
-    m_GlobalConfig["bindPort"] = port;
-    LOG_DEBUG("CmdLine port" << port);
-  }
-
-  QJsonValue w = m_CmdLineParser.value("w");
-  if(w.isString() && !w.isNull() && !w.toString().trimmed().isEmpty())
-  {
-    initHttpDirectory(w.toString());
-    LOG_DEBUG("CmdLine www/web/http-files" << w);
   }
 
   m_IsInitialized = true;
