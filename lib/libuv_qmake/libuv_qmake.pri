@@ -72,7 +72,12 @@ win32 {
 }
 
 !win32 {
-    SOURCES += $$PWD/../libuv/src/*.c
+    SOURCES += \#$$PWD/../libuv/src/*.c
+        $$PWD/../libuv/src/fs-poll.c \
+        $$PWD/../libuv/src/inet.c \
+        $$PWD/../libuv/src/threadpool.c \
+        $$PWD/../libuv/src/uv-common.c \
+        $$PWD/../libuv/src/version.c
 }
 
 unix {
