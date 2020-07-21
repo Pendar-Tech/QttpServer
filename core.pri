@@ -122,7 +122,7 @@ RCC_DIR = $$PWD/build/$$QTBUILDTYPE
 UI_DIR = $$PWD/build/$$QTBUILDTYPE
 
 isEmpty(DESTDIR) {
-    #DESTDIR = $$PWD/build/$$QTBUILDTYPE
+    DESTDIR = $$PWD/build/$$QTBUILDTYPE
 }
 
 win32 {
