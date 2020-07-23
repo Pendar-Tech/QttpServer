@@ -27,21 +27,6 @@ contains(CONFIG, HTTP_PARSER_WORKAROUND) {
 message('Including qttp source files')
 include($$PWD/src/qttp.pri)
 
-OTHER_FILES += \
-    $$PWD/lib/http/include/native/*.h \
-    $$PWD/lib/http/src/* \
-    $$PWD/lib/http-parser/http_parser.c \
-    $$PWD/lib/http-parser/http_parser.h \
-    $$PWD/lib/libuv/src/* \
-    $$PWD/lib/libuv/include/* \
-    $$PWD/*.md
-
-unix {
-    OTHER_FILES += $$PWD/lib/libuv/src/unix/*
-} else {
-    OTHER_FILES += $$PWD/lib/libuv/src/win/*
-}
-
 HEADERS +=
 
 SOURCES +=
@@ -81,9 +66,9 @@ macx: {
 }
 
 unix:!macx {
-    CONFIG += c++0x
+    #CONFIG += c++0x
     # This supports GCC 4.7
-    QMAKE_CXXFLAGS += -g -O0 -lm -lpthread -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -std=c++0x
+    QMAKE_CXXFLAGS += -lm -lpthread -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 #-g -O0 -std=c++0x
 }
 
 win32 {
