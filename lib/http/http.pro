@@ -45,9 +45,9 @@ macx: {
 }
 
 unix:!macx {
-    CONFIG += c++0x
+    #CONFIG += c++0x
     # This supports GCC 4.7
-    QMAKE_CXXFLAGS += -g -O0 -lm -lpthread -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -std=c++0x
+    QMAKE_CXXFLAGS += -lm -lpthread -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
 }
 
 win32 {

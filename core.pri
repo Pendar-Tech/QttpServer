@@ -4,11 +4,11 @@ QT += core network
 DEFINES += QTTP_OMIT_ASSERTIONS
 
 CONFIG(debug, debug|release) {
-    message('Compiling in DEBUG mode')
+#    message('Compiling in DEBUG mode')
     BUILDTYPE = Debug
     QTBUILDTYPE = qtdebug
 } else {
-    message('Compiling in RELEASE mode')
+#    message('Compiling in RELEASE mode')
     BUILDTYPE = Release
     QTBUILDTYPE = qtrelease
 }
@@ -24,7 +24,7 @@ contains(CONFIG, HTTP_PARSER_WORKAROUND) {
   }
 }
 
-message('Including qttp source files')
+#message('Including qttp source files')
 include($$PWD/src/qttp.pri)
 
 HEADERS +=
@@ -84,10 +84,44 @@ win32 {
         -luser32
 }
 
-# ARG order matters here, always make sure node_native goes first!
-LIBS += -lnode_native -luv -lhttp_parser
-
 contains(TEMPLATE, lib) {
+    # ARG order matters here, always make sure node_native goes first!
+    LIBS += -lnode_native -luv -lhttp_parser
+
+    win32 {
+        LIBS += -L$$PWD/build/$$BUILDTYPE -L$$PWD/build/$$BUILDTYPE/lib
+        DEPENDPATH += $$PWD/build/$$BUILDTYPE
+        OBJECTS_DIR = $$PWD/build/$$BUILDTYPE/obj
+        !contains(QMAKE_TARGET.arch, x86_64) {
+            LIBDIR = lib_win32_x86
+            #message('Targetting x86 Windows')
+        } else {
+            LIBDIR = lib_win32_x64
+            #message('Targetting x64 Windows')
+        }
+    } else:linux {
+        LIBS += -L$$PWD/build/out/$$BUILDTYPE
+        DEPENDPATH += $$PWD/build/out/$$BUILDTYPE
+        OBJECTS_DIR = $$PWD/build/$$QTBUILDTYPE
+        arm-linux-gnueabihf-g++ {
+            LIBDIR = lib_linux_armv7
+            #message('Targetting ARMv7 Linux')
+        } else:linux-aarch64-gnu-g++ {
+            LIBDIR = lib_linux_aarch64
+            #message('Targetting AArch64 Linux')
+        } else:contains(QMAKE_TARGET.arch, x86_64) {
+            LIBDIR = lib_linux_x64
+            #message('Targetting x64 Linux')
+        } else {
+            message('Unknown Target!')
+        }
+    } else:macx {
+        LIBS += -L$$PWD/build/out/$$BUILDTYPE
+        DEPENDPATH += $$PWD/build/out/$$BUILDTYPE
+        OBJECTS_DIR = $$PWD/build/$$QTBUILDTYPE
+        LIBDIR = lib_macos
+        #message('Targetting MacOS')
+    }
     message('Building QTTP library')
     contains(CONFIG, staticlib) {
         message('Building staticlib')
@@ -95,29 +129,19 @@ contains(TEMPLATE, lib) {
         message('Building shared library')
         DEFINES += QTTP_EXPORT
     }
+    DESTDIR = $$PWD/$$LIBDIR
+
 } else {
     contains(CONFIG, QTTP_LIBRARY) {
+        win32 {
+            DEPENDPATH += $$PWD/build/$$BUILDTYPE
+        } else:unix {
+            DEPENDPATH += $$PWD/build/out/$$BUILDTYPE
+        }
+
         message('Including QTTP library')
         LIBS += -lqttpserver
     }
-}
-
-MOC_DIR = $$PWD/build/$$QTBUILDTYPE
-RCC_DIR = $$PWD/build/$$QTBUILDTYPE
-UI_DIR = $$PWD/build/$$QTBUILDTYPE
-
-isEmpty(DESTDIR) {
-    DESTDIR = $$PWD/build/$$QTBUILDTYPE
-}
-
-win32 {
-    LIBS += -L$$PWD/build/$$BUILDTYPE -L$$PWD/build/$$BUILDTYPE/lib
-    DEPENDPATH += $$PWD/build/$$BUILDTYPE
-    OBJECTS_DIR = $$PWD/build/$$BUILDTYPE/obj
-} else {
-    LIBS += -L$$PWD/build/out/$$BUILDTYPE
-    DEPENDPATH += $$PWD/build/out/$$BUILDTYPE
-    OBJECTS_DIR = $$PWD/build/$$QTBUILDTYPE
 }
 
 macx {
