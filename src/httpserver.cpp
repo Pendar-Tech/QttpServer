@@ -134,7 +134,7 @@ bool HttpServer::initialize(bool bProcessCommandLine)
     QString var = env.value(CONFIG_DIRECTORY_ENV_VAR);
     if(!var.isNull() && !var.trimmed().isEmpty())
     {
-      LOG_INFO("Processing ENVIRONMENT VARIABLE [" << var << "]");
+      //LOG_INFO("Processing ENVIRONMENT VARIABLE [" << var << "]");
       initConfigDirectory(var);
     }
     else
@@ -222,12 +222,12 @@ bool HttpServer::initialize(bool bProcessCommandLine)
 
 void HttpServer::initGlobal(const QString &filepath)
 {
-  LOG_INFO("Processing filepath [" << filepath << "]");
+  //LOG_INFO("Processing filepath [" << filepath << "]");
 
   m_GlobalConfig = Utils::readJson(QDir(filepath).absolutePath());
 
-  LOG_INFO(m_GlobalConfig["bindIp"]);
-  LOG_INFO(m_GlobalConfig["bindPort"]);
+  //LOG_INFO(m_GlobalConfig["bindIp"]);
+  //LOG_INFO(m_GlobalConfig["bindPort"]);
 
   QJsonValueRef loggingValue = m_GlobalConfig["logfile"];
   if(loggingValue.isObject())
@@ -407,7 +407,7 @@ void HttpServer::initRoutes(const QString &filepath)
 
 void HttpServer::initConfigDirectory(const QString &path)
 {
-  LOG_INFO("Processing directory [" << path << "]");
+  //LOG_INFO("Processing directory [" << path << "]");
   QDir dir = path;
   initGlobal(dir.filePath(GLOBAL_CONFIG_FILE));
   initRoutes(dir.filePath(ROUTES_CONFIG_FILE));
@@ -515,7 +515,7 @@ int HttpServer::start()
       svr->m_ServerErrorCallback();
     }
 
-    LOG_FATAL(ip << ":" << port << " " << SERVER_ERROR_MSG);
+    //LOG_FATAL(ip << ":" << port << " " << SERVER_ERROR_MSG);
     return 1;
   }
 
@@ -1088,9 +1088,9 @@ bool HttpServer::registerRoute(HttpMethod method, const Route& route)
 
   auto & routes = m_Routes.at(method);
 
-  LOG_DEBUG("method [" << Utils::toString(method) << "] "
+  /* LOG_DEBUG("method [" << Utils::toString(method) << "] "
             "action [" << route.action << "] "
-            "path [" << route.path << "]");
+            "path [" << route.path << "]"); */
 
   bool containsKey = (routes.find(route.path) != routes.end());
 
