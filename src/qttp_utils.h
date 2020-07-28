@@ -63,7 +63,7 @@
   #ifndef LOG_FUNCTION
 // Sample below confuses QtCreator syntax editor:
 // QString(__FUNCTION__":%1").arg(__LINE__)
-    #define LOG_FUNCTION(LEVEL) LOG_DATETIME.append(LEVEL) << LOG_FILE.append(__FUNCTION__).append(":").append(QString::number(__LINE__))
+    //#define LOG_FUNCTION(LEVEL) LOG_DATETIME.append(LEVEL) << LOG_FILE.append(__FUNCTION__).append(":").append(QString::number(__LINE__))
   #endif
 
 // If the function and line numbers are too noisy then define
@@ -73,7 +73,7 @@
   #endif
 
   #ifndef LOG_TRACE
-    #define LOG_TRACE qttp::LogTrace logTraceObject(LOG_FILE.append(__FUNCTION__), __LINE__)
+    #define LOG_TRACE //qttp::LogTrace logTraceObject(LOG_FILE.append(__FUNCTION__), __LINE__)
   #endif
 
 // The no-quote feature may not be available on all version of Qt so this
@@ -91,8 +91,10 @@
   #  define QCRITICAL_NOQUOTE qCritical().noquote()
   #endif
 
+  #define COMPONENTNAME QStringLiteral("Server:")
+
   #ifndef LOG_DBG
-    #define LOG_DBG(X) QDEBUG_NOQUOTE << LOG_FUNCTION("DEBUG") << X
+    #define LOG_DBG(X) QDEBUG_NOQUOTE << COMPONENTNAME << X
   #endif
 
   #ifndef LOG_DEBUG
@@ -100,19 +102,19 @@
   #endif
 
   #ifndef LOG_INFO
-    #define LOG_INFO(X) QINFO_NOQUOTE << LOG_FUNCTION("INFO ") << X
+    #define LOG_INFO(X) QINFO_NOQUOTE << COMPONENTNAME << X
   #endif
 
   #ifndef LOG_WARN
-    #define LOG_WARN(X) QWARNING_NOQUOTE << LOG_FUNCTION("WARN ") << X
+    #define LOG_WARN(X) QWARNING_NOQUOTE << COMPONENTNAME << X
   #endif
 
   #ifndef LOG_ALERT
-    #define LOG_ALERT(X) QCRITICAL_NOQUOTE << LOG_FUNCTION("ALERT") << X
+    #define LOG_ALERT(X) QCRITICAL_NOQUOTE << COMPONENTNAME << X
   #endif
 
   #ifndef LOG_ERROR
-    #define LOG_ERROR(X) QCRITICAL_NOQUOTE << LOG_FUNCTION("ERROR") << X
+    #define LOG_ERROR(X) QCRITICAL_NOQUOTE << COMPONENTNAME << X
   #endif
 
   #ifndef LOG_FATAL

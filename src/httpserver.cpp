@@ -665,8 +665,8 @@ function<void(HttpEvent*)> HttpServer::defaultEventCallback() const
              // Check the control flag bit mask to determine if it was processed above.
              if(!response.isProcessed())
              {
-               LOG_DEBUG("No route found for" << urlPath << ", "
-                         "checking default routes");
+               /*LOG_DEBUG("No route found for" << urlPath << ", "
+                         "checking default routes"); */
 
                // Even if the action is not yet found, we'll give the user a chance to
                // intercept and process it.
@@ -861,7 +861,7 @@ bool HttpServer::searchAndServeFile(HttpData& data) const
     return false;
   }
 
-  LOG_TRACE;
+  //LOG_TRACE;
 
   // TODO: WOULD BE NICE TO CACHE STRING CONSTRUCTION.
 
@@ -905,7 +905,7 @@ bool HttpServer::searchAndServeFile(HttpData& data) const
     return false;
   }
 
-  LOG_DEBUG("Serving file [" << filepath << "]");
+  //LOG_DEBUG("Serving file [" << filepath << "]");
 
   QString contentType = FileUtils::determineContentType(urlPath);
 
