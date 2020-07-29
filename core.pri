@@ -61,8 +61,8 @@ contains(CONFIG, SSL_TLS) {
 
 macx: {
     LIBS += -framework CoreFoundation # -framework CoreServices
-    CONFIG += c++14
-    QMAKE_CXXFLAGS += -g -O0 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -std=gnu++0x -stdlib=libc++
+    #CONFIG += c++14
+    QMAKE_CXXFLAGS += -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -std=gnu++0x -stdlib=libc++
 }
 
 unix:!macx {
@@ -72,7 +72,7 @@ unix:!macx {
 }
 
 win32 {
-    CONFIG += c++14
+    #CONFIG += c++14
     QMAKE_CXXFLAGS += -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
     LIBS += \
         -ladvapi32 \
@@ -89,7 +89,6 @@ contains(TEMPLATE, lib) {
     LIBS += -lnode_native -luv -lhttp_parser
 
     win32 {
-        LIBS += -L$$PWD/build/$$BUILDTYPE -L$$PWD/build/$$BUILDTYPE/lib
         DEPENDPATH += $$PWD/build/$$BUILDTYPE
         OBJECTS_DIR = $$PWD/build/$$BUILDTYPE/obj
         !contains(QMAKE_TARGET.arch, x86_64) {
@@ -100,7 +99,6 @@ contains(TEMPLATE, lib) {
             #message('Targetting x64 Windows')
         }
     } else:linux {
-        LIBS += -L$$PWD/build/out/$$BUILDTYPE
         DEPENDPATH += $$PWD/build/out/$$BUILDTYPE
         OBJECTS_DIR = $$PWD/build/$$QTBUILDTYPE
         arm-linux-gnueabihf-g++ {
@@ -116,7 +114,6 @@ contains(TEMPLATE, lib) {
             message('Unknown Target!')
         }
     } else:macx {
-        LIBS += -L$$PWD/build/out/$$BUILDTYPE
         DEPENDPATH += $$PWD/build/out/$$BUILDTYPE
         OBJECTS_DIR = $$PWD/build/$$QTBUILDTYPE
         LIBDIR = lib_macos
@@ -130,7 +127,7 @@ contains(TEMPLATE, lib) {
         DEFINES += QTTP_EXPORT
     }
     DESTDIR = $$PWD/$$LIBDIR
-
+    LIBS += -L$$PWD/$$LIBDIR
 } else {
     contains(CONFIG, QTTP_LIBRARY) {
         win32 {
@@ -140,7 +137,8 @@ contains(TEMPLATE, lib) {
         }
 
         message('Including QTTP library')
-        LIBS += -lqttpserver
+        # ARG order matters here, always make sure qttpserv goes first followed by node_native!
+        LIBS += -lqttpserver -lnode_native -luv -lhttp_parser
     }
 }
 

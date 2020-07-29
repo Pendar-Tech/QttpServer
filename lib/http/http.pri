@@ -30,11 +30,32 @@ INCLUDEPATH += \
     $$PWD/../http-parser \
     $$PWD/../evt_tls
 
-CONFIG(debug, debug|release) {
-    LIBS += -L$$PWD/../../build/out/Debug
-} else {
-    LIBS += -L$$PWD/../../build/out/Release
+win32 {
+    !contains(QMAKE_TARGET.arch, x86_64) {
+        LIBDIR = lib_win32_x86
+        #message('Targetting x86 Windows')
+    } else {
+        LIBDIR = lib_win32_x64
+        #message('Targetting x64 Windows')
+    }
+} else:linux {
+    arm-linux-gnueabihf-g++ {
+        LIBDIR = lib_linux_armv7
+        #message('Targetting ARMv7 Linux')
+    } else:linux-aarch64-gnu-g++ {
+        LIBDIR = lib_linux_aarch64
+        #message('Targetting AArch64 Linux')
+    } else:contains(QMAKE_TARGET.arch, x86_64) {
+        LIBDIR = lib_linux_x64
+        #message('Targetting x64 Linux')
+    } else {
+        message('Unknown Target!')
+    }
+} else:macx {
+    LIBDIR = lib_macos
+    #message('Targetting MacOS')
 }
+LIBS = $$PWD/../../$$LIBDIR
 
 LIBS += -luv -lhttp_parser
 

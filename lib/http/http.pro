@@ -12,36 +12,39 @@ TARGET = node_native
     VERSION = 0.0.1
 }
 
-DEFINES += NNATIVE_ERROR_LOGGING
-
 include($$PWD/http.pri)
 
-CONFIG(debug, debug|release) {
-    win32 {
-        DESTDIR = $$PWD/../../build/Debug/lib
+win32 {
+    !contains(QMAKE_TARGET.arch, x86_64) {
+        LIBDIR = lib_win32_x86
+        #message('Targetting x86 Windows')
     } else {
-        DESTDIR = $$PWD/../../build/out/Debug
+        LIBDIR = lib_win32_x64
+        #message('Targetting x64 Windows')
     }
-} else {
-    win32 {
-        DESTDIR = $$PWD/../../build/Release/lib
+} else:linux {
+    arm-linux-gnueabihf-g++ {
+        LIBDIR = lib_linux_armv7
+        #message('Targetting ARMv7 Linux')
+    } else:linux-aarch64-gnu-g++ {
+        LIBDIR = lib_linux_aarch64
+        #message('Targetting AArch64 Linux')
+    } else:contains(QMAKE_TARGET.arch, x86_64) {
+        LIBDIR = lib_linux_x64
+        #message('Targetting x64 Linux')
     } else {
-        DESTDIR = $$PWD/../../build/out/Release
+        message('Unknown Target!')
     }
+} else:macx {
+    LIBDIR = lib_macos
+    #message('Targetting MacOS')
 }
-
-CONFIG(debug, debug|release) {
-    OTHER_FILES += $$PWD/../../build/Debug/lib/*
-    OTHER_FILES += $$PWD/../../build/out/Debug/*
-} else {
-    OTHER_FILES += $$PWD/../../build/Release/lib/*
-    OTHER_FILES += $$PWD/../../build/out/Release/*
-}
+DESTDIR = $$PWD/../../$$LIBDIR
 
 macx: {
     LIBS += -framework CoreFoundation # -framework CoreServices
-    CONFIG += c++14
-    QMAKE_CXXFLAGS += -g -O0 -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -std=gnu++0x -stdlib=libc++
+    #CONFIG += c++14
+    QMAKE_CXXFLAGS += -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -stdlib=libc++
 }
 
 unix:!macx {
@@ -51,7 +54,7 @@ unix:!macx {
 }
 
 win32 {
-    CONFIG += c++14
+    #CONFIG += c++14
     QMAKE_CXXFLAGS += -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64
     LIBS += \
         -llibuv \
