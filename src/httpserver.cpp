@@ -101,28 +101,14 @@ bool HttpServer::initialize(bool bProcessCommandLine)
   if(bProcessCommandLine)
   {
       m_CmdLineParser.addOptions({
-                                     {{"i", "ip"},
-                                      QCoreApplication::translate("main", "ip of the target interface"),
-                                      QCoreApplication::translate("main", "ip")},
-                                     {{"p", "port"},
-                                      QCoreApplication::translate("main", "port to listen on"),
-                                      QCoreApplication::translate("main", "port")},
-                                     {{"m", "meta"},
-                                      QCoreApplication::translate("main", "appends metadata to responses")},
-                                     {{"c", "config"},
-                                      QCoreApplication::translate("main", "absolute path to the global config file (json)"),
-                                      QCoreApplication::translate("main", "config")},
-                                     {{"r", "routes"},
-                                      QCoreApplication::translate("main", "absolute path to the routes config file (json)"),
-                                      QCoreApplication::translate("main", "routes")},
-                                     {{"d", "dir"},
-                                      QCoreApplication::translate("main", "absolute path to the config directory, don't combine with -c or -r args"),
-                                      QCoreApplication::translate("main", "dir")},
-                                     {{"w", "www"},
-                                      QCoreApplication::translate("main", "absolute path to the www folder to serve http files"),
-                                      QCoreApplication::translate("main", "www")},
-                                     {{"s", "swagger"},
-                                      QCoreApplication::translate("main", "exposes swagger-api json responses for the path /swagger/")},
+                                     {{"i", "ip"}, "ip of the target interface", "ip"},
+                                     {{"p", "port"}, "port to listen on", "port"},
+                                     {{"m", "meta"}, "appends metadata to responses"},
+                                     {{"c", "config"}, "absolute path to the global config file (json)", "config"},
+                                     {{"r", "routes"}, "absolute path to the routes config file (json)", "routes"},
+                                     {{"d", "dir"}, "absolute path to the config directory, don't combine with -c or -r args", "dir"},
+                                     {{"w", "www"}, "absolute path to the www folder to serve http files", "www"},
+                                     {{"s", "swagger"},"exposes swagger-api json responses for the path /swagger/"},
                                  });
 
       m_CmdLineParser.addHelpOption();
