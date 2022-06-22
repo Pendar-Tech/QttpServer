@@ -793,7 +793,11 @@ bool HttpServer::matchUrl(const QStringList& routeParts, const QString& path, QU
     }
   }
 
-  LOG_DEBUG("Found path" << path);
+  // When this is connected to an application that gets statuses all the time, this makes the X10 log useless, and it
+  // isn't really that useful.
+  //
+  // I don't want to switch off of LOG_DEBUG, though, so let's JUST comment this out.
+  // LOG_DEBUG("Found path" << path);
   return true;
 }
 
