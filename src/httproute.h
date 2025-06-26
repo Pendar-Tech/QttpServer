@@ -82,7 +82,7 @@ class QTTPSHARED_EXPORT Route
       action(actionName),
       method(routeMethod),
       path(routePath.startsWith('/') ? routePath : "/" + routePath),
-      parts(routePath.split('/', QString::SkipEmptyParts)),
+      parts(routePath.split('/', Qt::SkipEmptyParts)),
       visibility(visibility)
     {
     }

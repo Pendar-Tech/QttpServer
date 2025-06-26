@@ -748,7 +748,7 @@ function<void(HttpEvent*)> HttpServer::defaultEventCallback() const
 bool HttpServer::matchUrl(const QStringList& routeParts, const QString& path, QUrlQuery& params)
 {
 // Using splitRef to reduce string copies.
-  QVector<QStringRef> urlParts = path.splitRef('/', QString::SkipEmptyParts);
+  QVector<QStringRef> urlParts = path.splitRef('/', Qt::SkipEmptyParts);
 
   if(urlParts.length() != routeParts.length())
   {
