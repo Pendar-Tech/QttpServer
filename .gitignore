@@ -108,3 +108,5 @@ Thumbs.db
 /Release/
 /ui/
 /desktop.ini
+lib/
+build/
